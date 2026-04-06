@@ -1,0 +1,143 @@
+<!-- 
+
+      FOR EXECUTE PROJECT
+
+      cd "/mnt/d/Node JS/Full_Stack_Project/"
+      docker-compose up -d build
+
+-->
+
+
+<h1>Furniture Store</h1>
+
+<input id="name" placeholder="Name" />
+<input id="email" placeholder="Email" />
+<input id="age" placeholder="Age" />
+
+<br>
+<br>
+<button onclick="addUser()">Add User</button>
+<button onclick="getData()">Get Users</button>
+
+
+<table border="1" id="userTable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Age</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="tableBody"></tbody>
+</table>
+
+<style>
+  table {
+    border-collapse: collapse;
+    width: 60%;
+    margin-top: 20px;
+  }
+
+  .delete-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  .delete-btn:hover {
+    background-color: darkred;
+  }
+
+  th,
+  td {
+    padding: 10px;
+    text-align: center;
+  }
+
+  th {
+    background-color: #333;
+    color: white;
+  }
+
+  button {
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  async function getData() {
+    const res = await fetch("/api/users");
+    const data = await res.json();
+    // alert(JSON.stringify(data));
+    console.log(data);
+    displayUsers(data);
+  }
+
+  async function deleteUser(id) {
+    await fetch(`/api/users/${id}`, {
+      method: "DELETE"
+    });
+    getData();
+  }
+
+  async function addUser() {
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const age = document.getElementById("age").value;
+
+    if (!name) {
+      alert("Enter Your Name");
+      return;
+    }
+    if (!email) {
+      alert("Enter your Email");
+      return;
+    }
+    if (!age) {
+      alert("Enter Your Age");
+      return;
+    }
+
+    const res = await fetch("/api/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        age: age
+      })
+    });
+
+    const data = await res.json();
+    alert("User added!");
+    document.getElementById("name").value = "";
+    document.getElementById("email").value = "";
+    document.getElementById("age").value = "";
+    getData();
+  }
+
+  function displayUsers(users) {
+    const tableBody = document.getElementById("tableBody");
+    tableBody.innerHTML = "";
+
+    users.forEach(user => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+      <td>${user.name}</td>
+      <td>${user.email || ""}</td>
+      <td>${user.age || ""}</td>
+      <td>
+            <button class="delete-btn" onclick="deleteUser('${user._id}')">Delete</button>
+      </td>
+    `;
+      tableBody.appendChild(row);
+    });
+  }
+</script>
