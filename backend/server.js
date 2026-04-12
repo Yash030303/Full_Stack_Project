@@ -6,7 +6,9 @@ const app = express();
 app.use(express.json());
 
 // Connect MongoDB
-mongoose.connect(process.env.MONGO_URI);
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected ✅"))
+  .catch(err => console.log("Mongo Error ❌", err));
 
 const User = mongoose.model("User", {
   name: String,
