@@ -43,7 +43,7 @@ const User = mongoose.model("User", userSchema);
 // ✅ Routes
 
 // Get all users
-app.get("/api/users", async (req, res) => {
+app.get("https://full-stack-project-1-22fs.onrender.com/api/users", async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
@@ -53,7 +53,7 @@ app.get("/api/users", async (req, res) => {
 });
 
 // Add user
-app.post("/api/users", async (req, res) => {
+app.post("https://full-stack-project-1-22fs.onrender.com/api/users", async (req, res) => {
   try {
     console.log("BODY:", req.body);
     const user = await User.create(req.body);
@@ -64,7 +64,7 @@ app.post("/api/users", async (req, res) => {
 });
 
 // Delete user
-app.delete("/api/users/:id", async (req, res) => {
+app.delete("https://full-stack-project-1-22fs.onrender.com/api/users/:id", async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: "User Deleted ✅" });
