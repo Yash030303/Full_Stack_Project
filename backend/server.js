@@ -5,24 +5,54 @@ require("dotenv").config();
 const app = express();
 app.use(express.json());
 
-// Connect MongoDB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected ✅"))
-  .catch(err => console.log("Mongo Error ❌", err));
+// ✅ MongoDB Connection + Start Server
+async function startServer() {
+  try {
+    console.log("Connecting to Mongo...");
+    console.log("ENV CHECK:", process.env.MONGO_URI);
 
-const User = mongoose.model("User", {
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+
+    console.log("MongoDB Connected ✅");
+
+    // Start server ONLY after DB connected
+    app.listen(5000, "0.0.0.0", () => {
+      console.log("Server running 🚀 on port 5000");
+    });
+
+  } catch (err) {
+    console.log("Mongo Error ❌", err);
+    process.exit(1); // stop app if DB fails
+  }
+}
+
+startServer();
+
+// ✅ Schema & Model
+const userSchema = new mongoose.Schema({
   name: String,
   email: String,
-  age: Number
+  age: Number,
 });
 
-// API
+const User = mongoose.model("User", userSchema);
+
+// ✅ Routes
+
+// Get all users
 app.get("/api/users", async (req, res) => {
-  const users = await User.find();
-  res.json(users);
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Add user (dynamic)
+// Add user
 app.post("/api/users", async (req, res) => {
   try {
     console.log("BODY:", req.body);
@@ -33,17 +63,17 @@ app.post("/api/users", async (req, res) => {
   }
 });
 
-//  Delete User
+// Delete user
 app.delete("/api/users/:id", async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
-    res.send("User Deleted");
+    res.json({ message: "User Deleted ✅" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-
-app.listen(5000, "0.0.0.0", () => {
-  console.log("Server running");
+// ✅ Health check (very useful for Docker)
+app.get("/", (req, res) => {
+  res.send("API is running 🚀");
 });
