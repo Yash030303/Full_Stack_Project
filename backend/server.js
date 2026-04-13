@@ -76,6 +76,6 @@ app.delete("https://full-stack-project-1-22fs.onrender.com/api/users/:id", async
 });
 
 // ✅ Health check (very useful for Docker)
-app.get("/", (req, res) => {
+app.get("https://full-stack-project-1-22fs.onrender.com/", (req, res) => {
   res.send("API is running 🚀");
 });
