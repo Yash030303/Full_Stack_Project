@@ -71,7 +71,7 @@
 
 <script>
   async function getData() {
-    const res = await fetch("https://full-stack-project-1-22fs.onrender.com/api/users");
+    const res = await fetch("/api/users");
     const data = await res.json();
     // alert(JSON.stringify(data));
     console.log(data);
@@ -79,7 +79,7 @@
   }
 
   async function deleteUser(id) {
-    await fetch(`https://full-stack-project-1-22fs.onrender.com/api/users${id}`, {
+    await fetch(`/api/users${id}`, {
       method: "DELETE"
     });
     getData();
@@ -103,7 +103,7 @@
       return;
     }
 
-    const res = await fetch("https://full-stack-project-1-22fs.onrender.com/api/users", {
+    const res = await fetch("/api/users", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
